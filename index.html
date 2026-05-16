@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>AI Chat</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  margin: 0;
+  padding: 20px;
+}
+#chat {
+  width: 100%;
+  height: 70vh;
+  background: #222;
+  padding: 10px;
+  overflow-y: auto;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+}
+#inputBox {
+  display: flex;
+  gap: 10px;
+}
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+  background: #333;
+  color: #eee;
+}
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  background: #45a049;
+}
+</style>
+</head>
+<body>
+
+<h2>AI Chat</h2>
+
+<div id="chat"></div>
+
+<div id="inputBox">
+  <input id="msg" placeholder="Введите сообщение...">
+  <button onclick="send()">Отправить</button>
+</div>
+
+<script>
+async function send() {
+  const box = document.getElementById("msg");
+  const chat = document.getElementById("chat");
+  const text = box.value.trim();
+  if (!text) return;
+
+  chat.innerHTML += "Вы: " + text + "\n";
+  box.value = "";
+
+  const r = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: text })
+  });
+
+  const j = await r.json();
+  chat.innerHTML += "AI: " + j.reply + "\n\n";
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
